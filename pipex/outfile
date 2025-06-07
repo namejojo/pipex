@@ -1,0 +1,13 @@
+total 680
+-rwxrwxr-x  1 joao joao  33616 jun  6 19:19 a.out
+-rw-rw-r--  1 joao joao      2 jun  6 18:59 file2
+-rw-rw-r--  1 joao joao     40 jun  6 18:59 infile
+-rw-rw-r--  1 joao joao 402264 jun  6 14:56 lib
+-rw-rw-r--  1 joao joao 216818 jun  6 19:04 libft.a
+-rw-rw-r--  1 joao joao   1039 jun  6 16:26 Makefile
+drwxrwxr-x  5 joao joao   4096 jun  6 19:04 my_libft
+-rw-rw-r--  1 joao joao     33 jun  6 17:10 otherfile
+-rw-rw-r--  1 joao joao    632 jun  6 19:19 outfile
+-rw-rw-r--  1 joao joao   2279 jun  6 19:19 pipex.c
+drwxrwxr-x 10 joao joao   4096 jun  6 14:13 push_swap
+-rw-rw-r--  1 joao joao   1655 jun  6 17:49 testes.c

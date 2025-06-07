@@ -1,0 +1,10 @@
+{
+	"files.associations": {
+		"errno.h": "c",
+		"libft.h": "c",
+		"get_next_line_bonus.h": "c",
+		"atomic": "c",
+		"cerrno": "c",
+		"unistd.h": "c"
+	}
+}
