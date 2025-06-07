@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/07 14:55:52 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/07 17:25:14 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,62 +20,45 @@
 #include <stdlib.h>
 #include "my_libft/libft.h"
 
-int use_pipes(char *path, char **cmd, char **env, int *fd)
+// maybe add??
+
+char	*get_file(int fd)
 {
-	dup2(fd[0], STDIN_FILENO);
-	close (fd[0]);
-	dup2(fd[1], STDOUT_FILENO);
-	close (fd[1]);
-	execve (path, cmd, env);
-	exit (0);
+	char	*str;
+	char	*temp;
+
+	temp = get_next_line(fd);
+	str = NULL;
+	while (temp)
+	{
+		str = ft_strjoin_free(str, temp, 3);
+		temp = get_next_line(fd);
+	}
+	return (str);
 }
 
 int main(int ac, char **av, char **env)
 {
-	char	path[] = "/bin/ls";
-	char	*cmd[] = {"ls", "-l", NULL};
-	char	path2[] = "/bin/wc";
-	char	*cmd2[] = {"wc", "-l", NULL};
 	char	*str;
-	int		id1;
-	int		id2;
-	int		n;
+	int		sfd;
 	int		fd[2];
+	int		fd2[2];
 
-	if (pipe(fd) == -1)
+	sfd = open(av[1], O_RDONLY);
+	if (sfd < 0)
 		return (perror(strerror(errno)), errno);
-	id1 = fork();
-	if (id1 == -1)
+	str = get_file(sfd);
+	close (sfd);
+	if (pipe(fd))
 		return (perror(strerror(errno)), errno);
-	if (id1 == 0)
-	{
-		dup2(fd[1], STDOUT_FILENO);
-		close (fd[0]);
-		close (fd[1]);
-		execve (path, cmd, env);
-		exit (0);
-	}
-	waitpid (id1, NULL, 0);
-	
-	// str = get_next_line(fd[0]);
-	// while (str)
-	// {
-	// 	close (fd[1]);
-	// 	write (1, str, ft_strlen(str));
-	// 	free(str);
-	// 	str = get_next_line(fd[0]);
-	// }
-
-	id2 = fork();
-	if (id2 == -1)
+	ft_putstr_fd(str, fd[1]);
+	if (pipe(fd2))
 		return (perror(strerror(errno)), errno);
-	if (id2 == 0)
-	{
-		dup2(fd[0], STDIN_FILENO);
-		close (fd[0]);
-		close (fd[1]);
-		execve (path2, cmd2, env);
-		exit (0);
-	}
-	waitpid (id2, NULL, 0);
+	rd_frm_pipe_wr_int_pipe(fd[0], fd2[1]);
+	sfd = open(av[ac - 1], O_WRONLY);
+	if (sfd < 0)
+		return (perror(strerror(errno)), errno);
+	rd_frm_pipe_wr_int_pipe(fd2[0], sfd);
+	close (sfd);
+	free (str);
 }
