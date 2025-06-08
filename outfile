@@ -1,2 +1,6 @@
-9
-
+-rwxrwxr-x 1 joao joao  35456 jun  8 12:03 a.out
+ft
+ a.out
+-rw-rw-r-- 1 joao joao     43 jun  8 10:26 infile
+-rw-rw-r-- 1 joao joao   1039 jun  6 16:26 Makefile
+drwxrwxr-x 5 joao joao   4096 jun  8 10:33 my_libft
