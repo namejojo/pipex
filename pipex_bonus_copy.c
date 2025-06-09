@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/08 21:54:23 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/09 23:25:56 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,15 @@
 #include <stdlib.h>
 #include "my_libft/libft.h"
 
-// maybe add get_file??
+void exit_w_msg(int number, int id)
+{
+	if (number)
+	{
+		if (id == 0)
+			perror(strerror(errno));
+		exit(0);
+	}
+}
 
 char	*get_file(int fd)
 {
@@ -40,26 +48,22 @@ char	*get_file(int fd)
 
 char	*get_here_doc(char *here_doc)
 {
-	char	*ret;
 	char	*str;
 	char	*temp;
-	char	*doc_inic;
 	int		ind;
 
-	temp = NULL;
+	temp = get_next_line(0);
 	str = NULL;
-	while (ft_strstr(str, here_doc) == NULL)
-		str = ft_strjoin_free(str, temp = get_next_line(0), 3);
-	doc_inic = ft_strstr(str, here_doc);
-	ind = doc_inic - str;
-	ret = ft_calloc (ind + 1, 1);
-	while (ind--)
-		ret[ind] = str[ind];
-	free(str);
-	return (ret);
+	ind = ft_strlen(here_doc);
+	while (ft_strncmp(here_doc, temp, ft_strlen(temp) - 1))
+	{
+		str = ft_strjoin_free(str, temp, 3);
+		temp = get_next_line(0);
+	}
+	free (temp);
+	return (str);
 }
 
-// maybe add get_file??
 
 void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 {
@@ -73,7 +77,7 @@ void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 	dup2 (wr, STDOUT_FILENO);
 	close (wr);
 	ind = -1;
-	ret.cmd = ft_split(av, ' ');
+	ret.cmd = pipex_split(av, NULL, 0, 0);
 	str = ft_strjoin("/", ret.cmd[0]);
 	mat = ft_split(ft_strmat(env, "PATH=") + 5, ':');
 	while (mat[++ind])
@@ -84,6 +88,7 @@ void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 	}
 	ft_free_matrix(mat);
 	ft_free_matrix(ret.cmd);
+	close (rd[1]);
 	free (str);
 	exit (0);
 }
@@ -97,28 +102,26 @@ int	feed_file_into_pipe(char **av, char **env, int *fd2)
 
 	if (ft_strncmp(av[0], "here_doc", 9))
 	{
-		fd = open(av[0], O_RDONLY);
-		if (fd < 0)
-			return (perror(strerror(errno)), errno);
+		fd = open(av[1], O_RDONLY);
+		exit_w_msg(errno, 0);
 		str = get_file(fd);
 		close (fd);
 	}
 	else
 		str = get_here_doc(av[1]);
-	if (pipe(fd1))
-		return (perror(strerror(errno)), errno);
+	exit_w_msg(pipe(fd1), 0);
 	ft_putstr_fd(str, fd1[1]);
 	free (str);
 	close (fd1[1]);
-	if (pipe(fd2))
-		return (perror(strerror(errno)), errno);
+	exit_w_msg(pipe(fd2), 0);
 	id = fork();
-	if (id < 0)
-		return (perror(strerror(errno)), errno);
+	exit_w_msg(id < 0, id);
 	if (id == 0)
 		rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
+	exit_w_msg(errno, id);
 	close (fd1[0]);
 	waitpid(id, NULL, 0);
+	exit_w_msg(errno, id);
 	return (0);
 }
 
@@ -143,6 +146,15 @@ int	pipe_into_pipe (char *av, char **env, int *fd2)
 	close (fd1[1]);
 }
 
+int here_doc (int *fd, int *ac, char ***av)
+{
+	close (*fd);
+	(*av)++;
+	(*ac)--;
+	*fd = open ((*av)[*ac - 1], O_WRONLY | O_APPEND | O_CREAT);
+	exit_w_msg(errno, 0);
+}
+
 int main(int ac, char **av, char **env)
 {
 	char	*str;
@@ -151,29 +163,20 @@ int main(int ac, char **av, char **env)
 	int		id;
 	int		ind;
 
+	if (ac < 5)
+		return (write (2, "invalid number of argumants\n", 29));
 	fd = open (av[ac - 1], O_WRONLY);
-	if (fd < 0)
-		return (perror(strerror(errno)), errno);
 	if (ft_strncmp(av[1], "here_doc", 9) == 0)
-	{
-		close (fd);
-		av++;
-		ac--;
-		fd = open (av[ac - 1], O_WRONLY | O_APPEND | O_CREAT);
-		if (fd < 0)
-			return (perror(strerror(errno)), errno);
-	}
+		here_doc(&fd, &ac, &av);
 	if (ac < 5)
 		return (write (2, "invalid number of argumants\n", 29));
 	else if (feed_file_into_pipe(av, env, fd2))
 		return (errno);
 	ind = 2;
 	while (ac - ind++ > 3)
-		if (pipe_into_pipe (av[ind], env, fd2))
-			return (perror(strerror(errno)), errno);
+		exit_w_msg(pipe_into_pipe (av[ind], env, fd2), 0);
 	id = fork ();
-	if (id < 0)
-		return (perror(strerror(errno)), errno);
+	exit_w_msg(errno, id);
 	close (fd2[1]);
 	if (id == 0)
 		rdwr_frm_int_fd (av[ac - 2], env, fd2, fd);

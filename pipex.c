@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/08 01:18:11 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/09 19:28:50 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 	dup2 (wr, STDOUT_FILENO);
 	close (wr);
 	ind = -1;
-	ret.cmd = ft_split(av, ' ');
+	ret.cmd = pipex_split(av, NULL, 0, 0);
 	str = ft_strjoin("/", ret.cmd[0]);
 	mat = ft_split(ft_strmat(env, "PATH=") + 5, ':');
 	while (mat[++ind])

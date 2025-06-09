@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/08 21:42:38 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/09 20:13:00 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,16 @@
 #include "my_libft/libft.h"
 
 // maybe add get_file??
+
+void exit_w_msg(int number, int id)
+{
+	if (number)
+	{
+		if (id == 0)
+			perror(strerror(errno));
+		exit(0);
+	}
+}
 
 char	*get_file(int fd)
 {
@@ -97,23 +107,21 @@ int	feed_file_into_pipe(char **av, char **env, int *fd2)
 	if (ft_strncmp(av[0], "here_doc", 9))
 	{
 		fd = open(av[0], O_RDONLY);
-		if (fd < 0)
-			return (perror(strerror(errno)), errno);
+		exit_w_msg(fd < 0, 0);
 		str = get_file(fd);
 		close (fd);
 	}
 	else
 		str = get_here_doc(av[1]);
-	if (pipe(fd1))
-		return (perror(strerror(errno)), errno);
+	exit_w_msg(errno, 0);
+	pipe(fd1);
 	ft_putstr_fd(str, fd1[1]);
 	free (str);
+	exit_w_msg(errno, 0);
 	close (fd1[1]);
-	if (pipe(fd2))
-		return (perror(strerror(errno)), errno);
 	id = fork();
-	if (id < 0)
-		return (perror(strerror(errno)), errno);
+	exit_w_msg(id < 0, id);
+	fflush(stdout);
 	if (id == 0)
 		rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
 	close (fd1[0]);
@@ -157,19 +165,17 @@ int main(int ac, char **av, char **env)
 	}
 	if (ac < 5)
 		return (write (2, "invalid number of argumants\n", 29));
-	else if (feed_file_into_pipe(av, env, fd2))
-		return (errno);
+	feed_file_into_pipe(av, env, fd2);
+	fflush(stdout);
 	ind = 2;
 	while (ac - ind++ > 3)
 		if (pipe_into_pipe (av[ind], env, fd2))
-			return (perror(strerror(errno)), errno);
+			return (exit_w_msg(errno, 0), errno);
 	id = fork ();
-	if (id < 0)
-		return (perror(strerror(errno)), errno);
+	exit_w_msg(errno, id);
 	close (fd2[1]);
 	fd = open (av[ac - 1], O_WRONLY);
-	if (fd < 0)
-		return (perror(strerror(errno)), errno);
+	exit_w_msg(errno, id);
 	if (id == 0)
 		rdwr_frm_int_fd (av[ac - 2], env, fd2, fd);
 	close (fd2[0]);
