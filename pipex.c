@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/10 10:25:35 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/10 11:25:32 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,25 +19,6 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include "my_libft/libft.h"
-
-// maybe add get_file??
-
-char	*get_file(int fd)
-{
-	char	*str;
-	char	*temp;
-
-	temp = get_next_line(fd);
-	str = NULL;
-	while (temp)
-	{
-		str = ft_strjoin_free(str, temp, 3);
-		temp = get_next_line(fd);
-	}
-	return (str);
-}
-
-// maybe add get_file??
 
 void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 {
