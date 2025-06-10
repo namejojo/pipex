@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/10 11:30:36 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/10 11:35:05 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 		execve(ret.path, ret.cmd, env);
 		free (ret.path);
 	}
+	rd_wr_didnt_work(str + 1);
 	ft_free_matrix(mat);
 	ft_free_matrix(ret.cmd);
 	free (str);
@@ -70,7 +71,6 @@ int	feed_file_into_pipe(char **av, char **env, int *fd2)
 
 int	main(int ac, char **av, char **env)
 {
-	char	*str;
 	int		fd;
 	int		fd2[2];
 	int		id;
