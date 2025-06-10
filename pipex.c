@@ -6,18 +6,10 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/10 11:25:32 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/10 11:30:36 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <string.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <stdlib.h>
 #include "my_libft/libft.h"
 
 void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
@@ -86,7 +78,7 @@ int	main(int ac, char **av, char **env)
 	if (ac < 5)
 		return (write (2, "invalid number of argumants\n", 29));
 	if (feed_file_into_pipe(av, env, fd2))
-		return (perror(strerror(errno)), errno);
+		return (errno);
 	fd = open (av[4], O_WRONLY);
 	id = fork ();
 	close (fd2[1]);
