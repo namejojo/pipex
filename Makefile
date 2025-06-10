@@ -1,8 +1,10 @@
 LIB_DIR=my_libft/
 GNL_DIR=my_libft/get_next_line/
+PIP_DIR=my_libft/pipex/
 
 SRC_FILES=  $(wildcard ${LIB_DIR}*.c) \
-			$(wildcard ${GNL_DIR}*.c)
+			$(wildcard ${GNL_DIR}*.c) \
+			$(wildcard ${PIP_DIR}*.c)
 
 OBJ_FILES=${SRC_FILES:.c=.o}
 
