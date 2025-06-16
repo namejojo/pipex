@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:47:00 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 12:46:47 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:40:26 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	check_access(char **av, char **env)
 		free (ret.str);
 		ft_free_matrix(ret.cmd);
 		if (ret.check == -1)
-			find_error();
+			exit(errno);
 	}
 }
 
@@ -88,9 +88,4 @@ void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 	close (rd[1]);
 	close (wr);
 	exit (0);
-}
-
-void	find_error(void)
-{
-	exit(1);
 }

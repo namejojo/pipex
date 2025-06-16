@@ -6,18 +6,24 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:27:02 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 12:04:51 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:40:37 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../my_libft/libft.h"
 
-void	exit_w_msg(int number, int id)
+void	rd_wr_didnt_work(char *str)
+{
+	write (2, "command not found: ", 19);
+	write (2, str, ft_strlen(str));
+	write (2, "\n", 1);
+}
+
+void	exit_w_msg(int number)
 {
 	if (number)
 	{
-		if (id == 0)
-			perror(strerror(errno));
+		perror(strerror(errno));
 		exit(errno);
 	}
 }
@@ -35,13 +41,6 @@ char	*get_file(int fd)
 		temp = get_next_line(fd);
 	}
 	return (str);
-}
-
-void	rd_wr_didnt_work(char *str)
-{
-	write (2, "command not found: ", 19);
-	write (2, str, ft_strlen(str));
-	write (2, "\n", 1);
 }
 
 char	*get_file_func(char *av)

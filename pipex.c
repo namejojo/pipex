@@ -6,13 +6,13 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 13:20:12 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/12 18:22:02 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "my_libft/libft.h"
 
-void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
+static void	reg_rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 {
 	t_exec	ret;
 	char	**mat;
@@ -40,7 +40,7 @@ void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 	exit (0);
 }
 
-int	feed_file_into_pipe(char **av, char **env, int *fd2)
+static int	feed_file_into_pipe(char **av, char **env, int *fd2)
 {
 	int		fd;
 	int		fd1[2];
@@ -63,7 +63,7 @@ int	feed_file_into_pipe(char **av, char **env, int *fd2)
 	if (id < 0)
 		return (perror(strerror(errno)), errno);
 	if (id == 0)
-		rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
+		reg_rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
 	close (fd1[0]);
 	waitpid(id, NULL, 0);
 	return (0);
@@ -83,8 +83,10 @@ int	main(int ac, char **av, char **env)
 	id = fork ();
 	close (fd2[1]);
 	if (id == 0)
-		rdwr_frm_int_fd (av[3], env, fd2, fd);
+		reg_rdwr_frm_int_fd (av[3], env, fd2, fd);
 	close (fd2[0]);
 	waitpid (id, NULL, 0);
+	if (errno)
+		return (perror(strerror(errno)), errno);
 	return (0);
 }

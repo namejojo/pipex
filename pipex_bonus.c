@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 13:20:08 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/12 14:45:51 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,12 @@ int	feed_file_into_pipe(char **av, char **env, int *fd2)
 	else
 		str = get_here_doc(av[1]);
 	if (pipe(fd1))
-		exit(1);
+		exit_w_msg(errno);
 	ft_putstr_fd(str, fd1[1]);
 	close (fd1[1]);
 	free (str);
 	if (pipe(fd2))
-		exit(1);
+		exit_w_msg(errno);
 	id = fork();
 	if (id == 0)
 		rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
@@ -67,11 +67,11 @@ int	pipe_into_pipe(char *av, char **env, int *fd2)
 	int	id;
 
 	if (pipe(fd1))
-		exit(1);
+		exit_w_msg(errno);
 	close (fd2[1]);
 	id = fork();
 	if (id < 0)
-		exit (errno);
+		exit_w_msg(errno);
 	if (id == 0)
 		rdwr_frm_int_fd(av, env, fd2, fd1[1]);
 	close (fd2[0]);
@@ -108,5 +108,5 @@ int	main(int ac, char **av, char **env)
 	close (fd);
 	while (--ind)
 		waitpid (id, NULL, 0);
-	return (0);
+	exit_w_msg(errno);
 }
