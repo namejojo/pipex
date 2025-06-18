@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 19:09:51 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:41:58 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,41 @@ int	pipe_into_pipe(char *av, char **env, int *fd2)
 	return (1);
 }
 
+int	last_cmd_access_else(t_exec ret, char **env)
+{
+	ret.mat = ft_split(ft_strmat(env, "PATH=") + 5, ':');
+	while (ret.mat[++ret.ind] && ret.check == -1)
+	{
+		ret.path = ft_strjoin(ret.mat[ret.ind], ret.str);
+		ret.check = access(ret.path, X_OK);
+		free (ret.path);
+	}
+	ft_free_matrix(ret.mat);
+	return (ret.check);
+}
+
+int	last_cmd_access(char *av, char **env)
+{
+	t_exec	ret;
+	
+	ret.cmd = pipex_split(av, NULL, 0, 0);
+	if (ret.cmd[0][0] == '\0')
+		return (2);
+	ret.str = ft_strjoin("/", ret.cmd[0]);
+	ret.check = -1;
+	ret.ind = -1;
+	if (*env == NULL || ret.cmd[0][0] == '/')
+		ret.check = access(ret.cmd[0], X_OK);
+	else
+		ret.check = last_cmd_access_else (ret, env);
+	if (ret.check == -1)
+		return (1);
+	free (ret.str);
+	ft_free_matrix(ret.cmd);
+	return (0);
+}
+
+
 int	main(int ac, char **av, char **env)
 {
 	int	fd;
@@ -108,6 +143,6 @@ int	main(int ac, char **av, char **env)
 	close (fd);
 	while (--ind)
 		wait (NULL);
-	return (0);
+	return (last_cmd_access(av[ac - 2], env) * errno);
 }
 // find_cmd(av[ac - 1])
