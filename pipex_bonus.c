@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 14:45:51 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 16:12:59 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int	main(int ac, char **av, char **env)
 	int	ind;
 
 	if (ac < 5 + (ft_strncmp(av[1], "here_doc", 9) == 0))
-		return (write (2, "invalid number of argumants\n", 29));
+		return (write (2, "invalid number of arguments\n", 29));
 	check_access(av + 1, env);
 	if (ft_strncmp(av[1], "here_doc", 8))
 		fd = open (av[ac - 1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
@@ -108,5 +108,6 @@ int	main(int ac, char **av, char **env)
 	close (fd);
 	while (--ind)
 		waitpid (id, NULL, 0);
+	// fprintf(stderr, "%d", errno);
 	exit_w_msg(errno);
 }
