@@ -6,87 +6,129 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 18:22:02 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:07:53 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdio.h>
+#include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <stdlib.h>
 #include "my_libft/libft.h"
 
-static void	reg_rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
+int	feed_file_into_pipe(char **av, char **env, int *fd2)
 {
-	t_exec	ret;
-	char	**mat;
-	char	*str;
-	int		ind;
-
-	dup2 (rd[0], STDIN_FILENO);
-	close (rd[0]);
-	dup2 (wr, STDOUT_FILENO);
-	close (wr);
-	ind = -1;
-	ret.cmd = pipex_split(av, NULL, 0, 0);
-	str = ft_strjoin("/", ret.cmd[0]);
-	mat = ft_split(ft_strmat(env, "PATH=") + 5, ':');
-	while (mat[++ind])
-	{
-		ret.path = ft_strjoin(mat[ind], str);
-		execve(ret.path, ret.cmd, env);
-		free (ret.path);
-	}
-	rd_wr_didnt_work(str + 1);
-	ft_free_matrix(mat);
-	ft_free_matrix(ret.cmd);
-	free (str);
-	exit (0);
-}
-
-static int	feed_file_into_pipe(char **av, char **env, int *fd2)
-{
-	int		fd;
 	int		fd1[2];
 	char	*str;
 	int		id;
 
-	fd = open(av[1], O_RDONLY);
-	if (fd < 0)
-		return (perror(strerror(errno)), errno);
-	str = get_file(fd);
-	close (fd);
+	if (ft_strncmp(av[0], "here_doc", 9))
+		str = get_file_func(av[1]);
+	else
+		str = get_here_doc(av[1]);
 	if (pipe(fd1))
-		return (perror(strerror(errno)), errno);
+		perror(strerror(errno));
 	ft_putstr_fd(str, fd1[1]);
-	free (str);
 	close (fd1[1]);
+	free (str);
 	if (pipe(fd2))
-		return (perror(strerror(errno)), errno);
+		perror(strerror(errno));
+	id = fork();
+	if (id == 0)
+	{
+		if (access(av[1], R_OK) && ft_strncmp(av[0], "here_doc", 8))
+			exit (0);
+		rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
+	}
+	close (fd1[0]);
+	return (0);
+}
+
+int	pipe_into_pipe(char *av, char **env, int *fd2)
+{
+	int	fd1[2];
+	int	id;
+
+	if (pipe(fd1))
+		perror(strerror(errno));
+	close (fd2[1]);
 	id = fork();
 	if (id < 0)
-		return (perror(strerror(errno)), errno);
+		perror(strerror(errno));
 	if (id == 0)
-		reg_rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
+		rdwr_frm_int_fd(av, env, fd2, fd1[1]);
+	close (fd2[0]);
+	dup2 (fd1[0], fd2[0]);
+	dup2 (fd1[1], fd2[1]);
 	close (fd1[0]);
-	waitpid(id, NULL, 0);
+	close (fd1[1]);
+	return (1);
+}
+
+int	last_cmd_access_else(t_exec ret, char **env)
+{
+	ret.mat = ft_split(ft_strmat(env, "PATH=") + 5, ':');
+	while (ret.mat[++ret.ind] && ret.check == -1)
+	{
+		ret.path = ft_strjoin(ret.mat[ret.ind], ret.str);
+		ret.check = access(ret.path, X_OK);
+		free (ret.path);
+	}
+	ft_free_matrix(ret.mat);
+	return (ret.check);
+}
+
+int	check_cmd_access(char *av, char **env)
+{
+	t_exec	ret;
+
+	ret.cmd = pipex_split(av, NULL, 0, 0);
+	if (ret.cmd[0][0] == '\0')
+		return (2);
+	ret.str = ft_strjoin("/", ret.cmd[0]);
+	ret.check = -1;
+	ret.ind = -1;
+	if (*env == NULL || ret.cmd[0][0] == '/')
+		ret.check = access(ret.cmd[0], X_OK);
+	else
+		ret.check = last_cmd_access_else (ret, env);
+	if (ret.check == -1)
+		return (1);
+	free (ret.str);
+	ft_free_matrix(ret.cmd);
 	return (0);
 }
 
 int	main(int ac, char **av, char **env)
 {
-	int		fd;
-	int		fd2[2];
-	int		id;
+	int	fd;
+	int	fd2[2];
+	int	id;
+	int	ind;
 
-	if (ac < 5)
-		return (write (2, "invalid number of argumants\n", 29));
-	if (feed_file_into_pipe(av, env, fd2))
-		return (errno);
-	fd = open (av[4], O_WRONLY);
-	id = fork ();
+	if (ac < 5 + (ft_strncmp(av[0], "here_doc", 9) == 0))
+		return (write (2, "invalid number of arguments\n", 29));
+	if (ft_strncmp(av[1], "here_doc", 8))
+		fd = open (av[ac - 1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	else
+		fd = prep_here_doc(&ac, &av);
+	feed_file_into_pipe(av, env, fd2);
+	check_access(av + 1 + (ft_strncmp(av[1], "here_doc", 9) == 0), env);
+	ind = 2;
+	while (ac - ind++ > 3)
+		pipe_into_pipe (av[ind], env, fd2);
 	close (fd2[1]);
+	id = fork ();
 	if (id == 0)
-		reg_rdwr_frm_int_fd (av[3], env, fd2, fd);
+		rdwr_frm_int_fd (av[ac - 2], env, fd2, fd);
 	close (fd2[0]);
-	waitpid (id, NULL, 0);
-	if (errno)
-		return (perror(strerror(errno)), errno);
-	return (0);
+	close (fd);
+	while (--ind)
+		wait (NULL);
+	return (check_cmd_access(av[ac - 2], env) * errno);
 }
+// find_cmd(av[ac - 1])
