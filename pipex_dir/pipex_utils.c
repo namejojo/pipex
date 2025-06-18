@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:27:02 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 14:40:37 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 16:51:56 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,6 @@ void	rd_wr_didnt_work(char *str)
 	write (2, "command not found: ", 19);
 	write (2, str, ft_strlen(str));
 	write (2, "\n", 1);
-}
-
-void	exit_w_msg(int number)
-{
-	if (number)
-	{
-		perror(strerror(errno));
-		exit(errno);
-	}
 }
 
 char	*get_file(int fd)
@@ -63,3 +54,4 @@ int	prep_here_doc(int *ac, char ***av)
 	fd = open ((*av)[*ac - 1], O_WRONLY | O_APPEND | O_CREAT, 0644);
 	return (fd);
 }
+ 

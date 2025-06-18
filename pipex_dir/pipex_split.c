@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/09 19:06:25 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 12:04:00 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 19:09:16 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,17 @@ static int	next_str(char *str)
 	return (ind);
 }
 
+static	char	**create_empty_mat(void)
+{
+	char	**ret;
+
+	ret = malloc(2 * sizeof(char *));
+	ret[1] = NULL;
+	ret[0] = malloc(1);
+	ret[0][0] = '\0';
+	return (ret);
+}
+
 char	**pipex_split(char *str, char **ret, int count, int loop)
 {
 	int	ind;
@@ -91,7 +102,7 @@ char	**pipex_split(char *str, char **ret, int count, int loop)
 	if (count == 0)
 		count = wrd_count(str);
 	if (count == 0)
-		return (NULL);
+		return (create_empty_mat());
 	if (ret == NULL && loop == 0)
 		ret = malloc((count + 1) * sizeof(char *));
 	if (ret == NULL && loop == 0)

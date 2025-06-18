@@ -6,11 +6,18 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:47:00 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/12 14:40:26 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 19:10:02 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../my_libft/libft.h"
+
+void	cant_access(char *av)
+{
+	write(2, "No such file or directory: ", 28);
+	write(2, av, ft_strlen(av));
+	write(2, "\n", 1);
+}
 
 int	check_access_else(t_exec ret, char **env)
 {
@@ -25,27 +32,41 @@ int	check_access_else(t_exec ret, char **env)
 	return (ret.check);
 }
 
+void set_value(t_exec *ret, char **av)
+{
+	ret->cmd = pipex_split(av[0], NULL, 0, 0);
+	if (ret->cmd[0][0] == '\0')
+		write (2, "command not found: \n", 21);
+	ret->str = ft_strjoin("/", ret->cmd[0]);
+	ret->check = -1;
+	ret->ind = -1;
+}
+
 void	check_access(char **av, char **env)
 {
 	t_exec	ret;
 
+	if (access(av[0], R_OK) && ft_strncmp(av[0], "here_doc", 8))
+		cant_access(av[0]);
 	av = av + (ft_strncmp(av[0], "here_doc", 8) == 0);
 	while ((++av)[1] != NULL)
 	{
-		ret.cmd = pipex_split(av[0], NULL, 0, 0);
-		ret.str = ft_strjoin("/", ret.cmd[0]);
-		ret.check = -1;
-		ret.ind = -1;
+		set_value(&ret, av);
 		if (*env == NULL || ret.cmd[0][0] == '/')
 			ret.check = access(ret.cmd[0], X_OK);
 		else
 			ret.check = check_access_else (ret, env);
 		if (ret.check == -1)
-			rd_wr_didnt_work(ret.str + 1);
+		{
+			if (ret.cmd[0][0] == '/')
+				write (2, "no such file or directory: ", 28);
+			else
+				write (2, "command not found: ", 20);
+			write (2, ret.cmd[0], ft_strlen(ret.cmd[0]));
+			write (2, "\n", 1);
+		}
 		free (ret.str);
 		ft_free_matrix(ret.cmd);
-		if (ret.check == -1)
-			exit(errno);
 	}
 }
 
@@ -79,6 +100,7 @@ void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 {
 	t_exec	ret;
 
+	fflush(stdout);
 	dup2 (rd[0], STDIN_FILENO);
 	close (rd[0]);
 	dup2 (wr, STDOUT_FILENO);
