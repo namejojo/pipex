@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 20:50:12 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 21:00:21 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,11 @@ int	feed_file_into_pipe(char **av, char **env, int *fd2)
 		perror(strerror(errno));
 	id = fork();
 	if (id == 0)
+	{
+		if (access(av[1], R_OK) && ft_strncmp(av[0], "here_doc", 8))
+			exit (0);
 		rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
+	}
 	close (fd1[0]);
 	return (0);
 }
@@ -78,7 +82,7 @@ int	last_cmd_access_else(t_exec ret, char **env)
 	return (ret.check);
 }
 
-int	last_cmd_access(char *av, char **env)
+int	check_cmd_access(char *av, char **env)
 {
 	t_exec	ret;
 
@@ -125,6 +129,6 @@ int	main(int ac, char **av, char **env)
 	close (fd);
 	while (--ind)
 		wait (NULL);
-	return (last_cmd_access(av[ac - 2], env) * errno);
+	return (check_cmd_access(av[ac - 2], env) * errno);
 }
 // find_cmd(av[ac - 1])
