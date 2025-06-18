@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 20:47:01 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:50:12 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int	last_cmd_access_else(t_exec ret, char **env)
 int	last_cmd_access(char *av, char **env)
 {
 	t_exec	ret;
-	
+
 	ret.cmd = pipex_split(av, NULL, 0, 0);
 	if (ret.cmd[0][0] == '\0')
 		return (2);

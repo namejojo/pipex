@@ -6,18 +6,11 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:47:00 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 19:10:02 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:50:22 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../my_libft/libft.h"
-
-void	cant_access(char *av)
-{
-	write(2, "No such file or directory: ", 28);
-	write(2, av, ft_strlen(av));
-	write(2, "\n", 1);
-}
 
 int	check_access_else(t_exec ret, char **env)
 {
@@ -32,7 +25,7 @@ int	check_access_else(t_exec ret, char **env)
 	return (ret.check);
 }
 
-void set_value(t_exec *ret, char **av)
+void	set_value(t_exec *ret, char **av)
 {
 	ret->cmd = pipex_split(av[0], NULL, 0, 0);
 	if (ret->cmd[0][0] == '\0')
