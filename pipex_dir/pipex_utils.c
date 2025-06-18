@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 10:27:02 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 16:51:56 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:47:09 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,20 @@ int	prep_here_doc(int *ac, char ***av)
 	fd = open ((*av)[*ac - 1], O_WRONLY | O_APPEND | O_CREAT, 0644);
 	return (fd);
 }
- 
+
+char	*get_here_doc(char *here_doc)
+{
+	char	*str;
+	char	*temp;
+
+	temp = get_next_line(0);
+	str = NULL;
+	while (ft_strncmp(here_doc, temp, ft_strlen(here_doc))
+		|| ft_strlen(here_doc) != ft_strlen(temp) - 1)
+	{
+		str = ft_strjoin_free(str, temp, 3);
+		temp = get_next_line(0);
+	}
+	free (temp);
+	return (str);
+}

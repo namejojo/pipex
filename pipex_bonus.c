@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 20:41:58 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/18 20:47:01 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,6 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include "my_libft/libft.h"
-
-char	*get_here_doc(char *here_doc)
-{
-	char	*str;
-	char	*temp;
-
-	temp = get_next_line(0);
-	str = NULL;
-	while (ft_strncmp(here_doc, temp, ft_strlen(here_doc))
-		|| ft_strlen(here_doc) != ft_strlen(temp) - 1)
-	{
-		str = ft_strjoin_free(str, temp, 3);
-		temp = get_next_line(0);
-	}
-	free (temp);
-	return (str);
-}
 
 int	feed_file_into_pipe(char **av, char **env, int *fd2)
 {
@@ -115,7 +98,6 @@ int	last_cmd_access(char *av, char **env)
 	ft_free_matrix(ret.cmd);
 	return (0);
 }
-
 
 int	main(int ac, char **av, char **env)
 {
