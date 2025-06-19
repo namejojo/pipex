@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:47:00 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/19 11:36:35 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/19 13:26:16 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr)
 {
 	t_exec	ret;
 
-	fflush(stdout);
 	dup2 (rd[0], STDIN_FILENO);
 	close (rd[0]);
 	dup2 (wr, STDOUT_FILENO);

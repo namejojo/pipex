@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/19 11:42:37 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/19 13:25:39 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,19 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include "my_libft/libft.h"
+
+void	not_rdwr_frm_int_fd(int *rd, int wr)
+{
+	fflush(stdout);
+	dup2 (rd[0], STDIN_FILENO);
+	close (rd[0]);
+	dup2 (wr, STDOUT_FILENO);
+	close (wr);
+	close (rd[1]);
+	close (wr);
+	exit (0);
+}
+
 
 int	feed_file_into_pipe(char **av, char **env, int *fd2)
 {
@@ -41,7 +54,7 @@ int	feed_file_into_pipe(char **av, char **env, int *fd2)
 	if (id == 0)
 	{
 		if (access(av[1], R_OK) && ft_strncmp(av[0], "here_doc", 8))
-			exit (0);
+			not_rdwr_frm_int_fd (fd1, fd2[1]);
 		rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
 	}
 	close (fd1[0]);
@@ -124,11 +137,15 @@ int	main(int ac, char **av, char **env)
 	close (fd2[1]);
 	id = fork ();
 	if (id == 0)
-		rdwr_frm_int_fd (av[ac - 2], env, fd2, fd);
+	{
+		if (fd < 0)
+			permission_denied(av[ac - 1]);
+		else
+			rdwr_frm_int_fd (av[ac - 2], env, fd2, fd);
+	}
 	close (fd2[0]);
 	close (fd);
 	while (--ind)
 		wait (NULL);
-	return (check_cmd_access(av[ac - 2], env) * errno);
+	return (check_cmd_access(av[ac - 2], env) * 127);
 }
-// find_cmd(av[ac - 1])
