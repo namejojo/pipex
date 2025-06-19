@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 11:47:00 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 20:50:22 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/19 11:36:35 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	check_access(char **av, char **env)
 {
 	t_exec	ret;
 
-	if (access(av[0], R_OK) && ft_strncmp(av[0], "here_doc", 8))
+	if (access(av[0], R_OK) && ft_strncmp(av[-1], "here_doc", 8))
 		cant_access(av[0]);
 	av = av + (ft_strncmp(av[0], "here_doc", 8) == 0);
 	while ((++av)[1] != NULL)

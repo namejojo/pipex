@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 21:07:57 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/19 11:42:37 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	check_cmd_access(char *av, char **env)
 
 	ret.cmd = pipex_split(av, NULL, 0, 0);
 	if (ret.cmd[0][0] == '\0')
-		return (2);
+		return (ft_free_matrix(ret.cmd), 1);
 	ret.str = ft_strjoin("/", ret.cmd[0]);
 	ret.check = -1;
 	ret.ind = -1;
@@ -97,7 +97,7 @@ int	check_cmd_access(char *av, char **env)
 	else
 		ret.check = last_cmd_access_else (ret, env);
 	if (ret.check == -1)
-		return (1);
+		return (ft_free_matrix(ret.cmd), free (ret.str), 1);
 	free (ret.str);
 	ft_free_matrix(ret.cmd);
 	return (0);
@@ -110,9 +110,9 @@ int	main(int ac, char **av, char **env)
 	int	id;
 	int	ind;
 
-	if (ac < 5 + (ft_strncmp(av[0], "here_doc", 9) == 0))
+	if (ac < 5 + (ft_strncmp(av[1], "here_doc", 9) == 0))
 		return (write (2, "invalid number of arguments\n", 29));
-	if (ft_strncmp(av[1], "here_doc", 8))
+	if (ft_strncmp(av[1], "here_doc", 9))
 		fd = open (av[ac - 1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	else
 		fd = prep_here_doc(&ac, &av);
