@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/19 13:25:39 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/19 14:00:23 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,6 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include "my_libft/libft.h"
-
-void	not_rdwr_frm_int_fd(int *rd, int wr)
-{
-	fflush(stdout);
-	dup2 (rd[0], STDIN_FILENO);
-	close (rd[0]);
-	dup2 (wr, STDOUT_FILENO);
-	close (wr);
-	close (rd[1]);
-	close (wr);
-	exit (0);
-}
-
 
 int	feed_file_into_pipe(char **av, char **env, int *fd2)
 {
@@ -118,34 +105,27 @@ int	check_cmd_access(char *av, char **env)
 
 int	main(int ac, char **av, char **env)
 {
-	int	fd;
-	int	fd2[2];
-	int	id;
-	int	ind;
+	t_main	data;
 
 	if (ac < 5 + (ft_strncmp(av[1], "here_doc", 9) == 0))
 		return (write (2, "invalid number of arguments\n", 29));
 	if (ft_strncmp(av[1], "here_doc", 9))
-		fd = open (av[ac - 1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+		data.fd = open (av[ac - 1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	else
-		fd = prep_here_doc(&ac, &av);
-	feed_file_into_pipe(av, env, fd2);
+		data.fd = prep_here_doc(&ac, &av);
+	feed_file_into_pipe(av, env, data.fd2);
 	check_access(av + 1 + (ft_strncmp(av[1], "here_doc", 9) == 0), env);
-	ind = 2;
-	while (ac - ind++ > 3)
-		pipe_into_pipe (av[ind], env, fd2);
-	close (fd2[1]);
-	id = fork ();
-	if (id == 0)
+	data.ind = 2;
+	while (ac - data.ind++ > 3)
+		pipe_into_pipe (av[data.ind], env, data.fd2);
+	close (data.fd2[1]);
+	data.id = fork ();
+	if (data.id == 0)
 	{
-		if (fd < 0)
+		if (data.fd < 0)
 			permission_denied(av[ac - 1]);
 		else
-			rdwr_frm_int_fd (av[ac - 2], env, fd2, fd);
+			rdwr_frm_int_fd (av[ac - 2], env, data.fd2, data.fd);
 	}
-	close (fd2[0]);
-	close (fd);
-	while (--ind)
-		wait (NULL);
-	return (check_cmd_access(av[ac - 2], env) * 127);
+	return (end(data, ac, av, env));
 }

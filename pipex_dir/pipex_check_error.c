@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_error_msg.c                                  :+:      :+:    :+:   */
+/*   pipex_error.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/18 20:49:04 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/19 13:44:34 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/19 14:00:50 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,25 @@ void	permission_denied(char *av)
 	write (2, "permission denied: ", 20);
 	write(2, av, ft_strlen(av));
 	write(2, "\n", 1);
+}
+
+void	not_rdwr_frm_int_fd(int *rd, int wr)
+{
+	fflush(stdout);
+	dup2 (rd[0], STDIN_FILENO);
+	close (rd[0]);
+	dup2 (wr, STDOUT_FILENO);
+	close (wr);
+	close (rd[1]);
+	close (wr);
+	exit (0);
+}
+
+int	end(t_main data, int ac, char **av, char **env)
+{
+	close (data.fd2[0]);
+	close (data.fd);
+	while (--data.ind)
+		wait (NULL);
+	return (check_cmd_access(av[ac - 2], env) * 127);
 }
