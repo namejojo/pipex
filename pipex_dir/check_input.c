@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 08:22:04 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/20 23:45:47 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 00:09:14 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	check_all_cmd(int ac, char **av, char **env)
 {
 	int	ind;
 	int	value;
-	
+
 	if (ft_strncmp(av[0], "here_doc", 9) && (access(av[1], R_OK)))
 		perror(av[1]);
 	ind = 1 + (access(av[1], R_OK) != 0);
@@ -87,4 +87,3 @@ int	check_input(int *ac, char ***av, char **env)
 		perror((*av)[*ac - 1]);
 	return (fd);
 }
-

@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 06:38:48 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/20 23:53:24 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 00:08:51 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	rdwr_frm_int_fd(char *cmd_path_inc, char **env, int rd, int wr)
 	int		value;
 	int		ind;
 	char	*path;
-	
+
 	dup2(rd, 0);
 	dup2(wr, 1);
 	env = ft_split(ft_strnmat(env, "PATH=", 5) + 5, ':');
@@ -46,10 +46,10 @@ int	pipe_into_pipe(char *av, char **env, int *fd)
 	int	id;
 
 	if (pipe(fd2))
-		return(perror(strerror(errno)), exit(errno), 0);
+		return (perror(strerror(errno)), exit(errno), 0);
 	id = fork();
 	if (id < 0)
-		return(perror(strerror(errno)), exit(errno), 0);
+		return (perror(strerror(errno)), exit(errno), 0);
 	if (id == 0)
 	{
 		close (fd[1]);

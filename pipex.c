@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/20 23:57:00 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 00:10:29 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ char	*get_here_doc(char *limiter)
 	}
 	free(temp);
 	return (str);
-
 }
+
 void	get_file(char *file, int wr)
 {
 	int		fd;
@@ -43,12 +43,11 @@ void	get_file(char *file, int wr)
 	}
 }
 
-
 int	feed_file_into_pipe(int *fd, int ac, char **av, char **ev)
 {
 	int		id;
 	char	*str;
-	
+
 	str == NULL;
 	id = fork();
 	if (id < 0)
@@ -68,16 +67,6 @@ int	feed_file_into_pipe(int *fd, int ac, char **av, char **ev)
 		exit(0);
 	}
 	return (ft_strncmp(av[0], "here_doc", 9) && access(av[1], R_OK));
-}
-
-int feed_pipe_into_file(int *fd, int ac, char **av, char **ev)
-{
-	char	**cmd;
-	int		value;
-	int		ind;
-	char	*path;
-	
-	rdwr_frm_int_fd(av[ac - 2], ev, fd[0], fd[1]);
 }
 
 int	main(int ac, char **av, char **ev)
@@ -101,10 +90,10 @@ int	main(int ac, char **av, char **ev)
 			return (perror(strerror(errno)), exit(errno), 0);
 		if (id == 0)
 			rdwr_frm_int_fd(av[ac - 2], ev, fd[0], fd_wr);
-		}
+	}
 	waitpid(id, NULL, 0);
 	close(fd_wr);
 	close(fd[0]);
 	ind = (check_one_cmd(av[ac - 2], ev, NULL, 1) != 0) * 127;
-	return(ind * (fd_wr > 0) + (fd_wr < 0));
+	return (ind * (fd_wr > 0) + (fd_wr < 0));
 }
