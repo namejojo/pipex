@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 06:38:48 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/20 11:55:51 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/20 23:53:24 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ int	pipe_into_pipe(char *av, char **env, int *fd)
 		dup2 (fd2[1], fd[1]);
 		close (fd2[0]);
 		close (fd2[1]);
-		close(fd[1]);
 	}
 	return (id);
 }

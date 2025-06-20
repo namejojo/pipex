@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/20 23:07:32 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/20 23:57:00 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	main(int ac, char **av, char **ev)
 		return (perror(strerror(errno)), errno);
 	ind = 1 + feed_file_into_pipe(fd, ac, av, ev);
 	while (++ind < ac - 2)
-		id = pipe_into_pipe(av[ind], ev, fd);
+		id += pipe_into_pipe(av[ind], ev, fd);
 	close(fd[1]);
 	if (check_one_cmd(av[ac - 2], ev, NULL, 1) == 0 && fd_wr > 0)
 	{
@@ -101,8 +101,10 @@ int	main(int ac, char **av, char **ev)
 			return (perror(strerror(errno)), exit(errno), 0);
 		if (id == 0)
 			rdwr_frm_int_fd(av[ac - 2], ev, fd[0], fd_wr);
-	}
+		}
 	waitpid(id, NULL, 0);
+	close(fd_wr);
+	close(fd[0]);
 	ind = (check_one_cmd(av[ac - 2], ev, NULL, 1) != 0) * 127;
 	return(ind * (fd_wr > 0) + (fd_wr < 0));
 }

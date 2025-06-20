@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 08:22:04 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/20 21:25:23 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/20 23:45:47 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,13 @@ void	check_all_cmd(int ac, char **av, char **env)
 			value = check_one_cmd(av[ind], env, NULL, 1);
 		if (value == 1)
 			return (perror(""), exit(errno));
-		else if (value == -1)
+		else if (ft_strchr(av[ind], '/') && value == -1)
 			perror(av[ind]);
+		else if (value == -1)
+		{
+			ft_putstr_fd(av[ind], 2);
+			ft_putstr_fd(": command not found\n", 2);
+		}
 	}
 }
 
