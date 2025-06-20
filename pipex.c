@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/18 21:07:53 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/20 08:00:03 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,115 +20,110 @@
 #include <stdlib.h>
 #include "my_libft/libft.h"
 
-int	feed_file_into_pipe(char **av, char **env, int *fd2)
+void	check_rd_file(char *file)
 {
-	int		fd1[2];
-	char	*str;
-	int		id;
-
-	if (ft_strncmp(av[0], "here_doc", 9))
-		str = get_file_func(av[1]);
-	else
-		str = get_here_doc(av[1]);
-	if (pipe(fd1))
-		perror(strerror(errno));
-	ft_putstr_fd(str, fd1[1]);
-	close (fd1[1]);
-	free (str);
-	if (pipe(fd2))
-		perror(strerror(errno));
-	id = fork();
-	if (id == 0)
+	if (access(file, R_OK))
 	{
-		if (access(av[1], R_OK) && ft_strncmp(av[0], "here_doc", 8))
-			exit (0);
-		rdwr_frm_int_fd (av[2], env, fd1, fd2[1]);
+		if (close(open(file, O_RDONLY | O_APPEND | O_CREAT, 0644)))
+		{
+			ft_putstr_fd("permission denied: ", 2);
+			ft_putendl_fd(file, 2);
+		}
+		else
+		{
+			unlink(file);
+			ft_putstr_fd("no such file or directory: ", 2);
+			ft_putendl_fd(file, 2);
+		}
 	}
-	close (fd1[0]);
-	return (0);
 }
 
-int	pipe_into_pipe(char *av, char **env, int *fd2)
+int	check_one_cmd_w_env(char *str, char **env, char **cmd, int value)
 {
-	int	fd1[2];
-	int	id;
+	char	*cmd_path;
+	int		ind;
 
-	if (pipe(fd1))
-		perror(strerror(errno));
-	close (fd2[1]);
-	id = fork();
-	if (id < 0)
-		perror(strerror(errno));
-	if (id == 0)
-		rdwr_frm_int_fd(av, env, fd2, fd1[1]);
-	close (fd2[0]);
-	dup2 (fd1[0], fd2[0]);
-	dup2 (fd1[1], fd2[1]);
-	close (fd1[0]);
-	close (fd1[1]);
-	return (1);
-}
-
-int	last_cmd_access_else(t_exec ret, char **env)
-{
-	ret.mat = ft_split(ft_strmat(env, "PATH=") + 5, ':');
-	while (ret.mat[++ret.ind] && ret.check == -1)
-	{
-		ret.path = ft_strjoin(ret.mat[ret.ind], ret.str);
-		ret.check = access(ret.path, X_OK);
-		free (ret.path);
-	}
-	ft_free_matrix(ret.mat);
-	return (ret.check);
-}
-
-int	check_cmd_access(char *av, char **env)
-{
-	t_exec	ret;
-
-	ret.cmd = pipex_split(av, NULL, 0, 0);
-	if (ret.cmd[0][0] == '\0')
-		return (2);
-	ret.str = ft_strjoin("/", ret.cmd[0]);
-	ret.check = -1;
-	ret.ind = -1;
-	if (*env == NULL || ret.cmd[0][0] == '/')
-		ret.check = access(ret.cmd[0], X_OK);
-	else
-		ret.check = last_cmd_access_else (ret, env);
-	if (ret.check == -1)
+	env = ft_split(ft_strnmat(env, "PATH=", 5), ':');
+	if (env == NULL)
 		return (1);
-	free (ret.str);
-	ft_free_matrix(ret.cmd);
-	return (0);
+	cmd = pipex_split(str, NULL, 0, 0);
+	if (cmd == NULL)
+		return (ft_free_matrix(env), 1);
+	str = ft_strjoin("/", *cmd);
+	if (str == NULL)
+		return (ft_free_matrix(cmd), ft_free_matrix(env), 1);
+	ind = -1;
+	while (env[++ind] && value)
+	{
+		cmd_path = ft_strjoin (env[ind], str);
+		if (cmd_path == NULL)
+			return (free(str), ft_free_matrix(env), ft_free_matrix(cmd), 1);
+		value = access(cmd_path, X_OK);
+		free(cmd_path);
+	}
+	free (str);
+	ft_free_matrix(cmd);
+	ft_free_matrix(env);
+	return (value);
+}
+
+void	check_all_cmd(int ac, char **av, char **env)
+{
+	int	ind;
+	int	value;
+	
+	if (ft_strncmp(av[0], "here_doc", 9))
+		check_rd_file(av[1]);
+	av += (access(av[1], R_OK) != 0);
+	ind = 1;
+	while (av[++ind + 1])
+	{
+		if (av[ind][0] == '/' || *env == NULL)
+			value = access(av[ind], X_OK) * 2;
+		else
+			value = check_one_cmd_w_env(av[ind], env, NULL, 1);
+		if (value == 1)
+			return (perror(strerror(errno)), exit(errno));
+		else if (value == -1)
+		{
+			ft_putstr_fd("command not found: ", 2);
+			ft_putendl_fd(av[ind], 2);
+		}
+		if (value == -2)
+			ft_putstr_fd("no such file or directory: ", 2);
+		if (value == -2)
+			ft_putendl_fd(av[ind], 2);
+	}
+}
+
+int	check_input(int *ac, char ***av, char **env)
+{
+	int	fd;
+
+	(*ac) -= (ft_strncmp((*av)[1], "here_doc", 9) == 0);
+	(*av) += (ft_strncmp((*av)[1], "here_doc", 9) == 0);
+	if (*ac < 5)
+	{
+		ft_putendl_fd("invalid number of arguments", 2);
+		exit(0);
+	}
+	check_all_cmd(*ac, *av, env);
+	if (ft_strncmp((*av)[0], "here_doc", 9))
+		fd = open((*av)[*ac - 1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
+	else
+		fd = open((*av)[*ac - 1], O_WRONLY | O_APPEND | O_CREAT, 0644);
+	if (fd < 0)
+	{
+		ft_putstr_fd("permission denied: ", 2);
+		ft_putendl_fd((*av)[*ac - 1], 2);
+	}
+	return (fd);
 }
 
 int	main(int ac, char **av, char **env)
 {
 	int	fd;
-	int	fd2[2];
-	int	id;
-	int	ind;
 
-	if (ac < 5 + (ft_strncmp(av[0], "here_doc", 9) == 0))
-		return (write (2, "invalid number of arguments\n", 29));
-	if (ft_strncmp(av[1], "here_doc", 8))
-		fd = open (av[ac - 1], O_WRONLY | O_TRUNC | O_CREAT, 0644);
-	else
-		fd = prep_here_doc(&ac, &av);
-	feed_file_into_pipe(av, env, fd2);
-	check_access(av + 1 + (ft_strncmp(av[1], "here_doc", 9) == 0), env);
-	ind = 2;
-	while (ac - ind++ > 3)
-		pipe_into_pipe (av[ind], env, fd2);
-	close (fd2[1]);
-	id = fork ();
-	if (id == 0)
-		rdwr_frm_int_fd (av[ac - 2], env, fd2, fd);
-	close (fd2[0]);
-	close (fd);
-	while (--ind)
-		wait (NULL);
-	return (check_cmd_access(av[ac - 2], env) * errno);
+	fd = check_input(&ac, &av, env);
 }
 // find_cmd(av[ac - 1])

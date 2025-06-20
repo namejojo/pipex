@@ -6,7 +6,7 @@
 #    By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/12 13:07:24 by jlima-so          #+#    #+#              #
-#    Updated: 2025/06/18 21:07:17 by jlima-so         ###   ########.fr        #
+#    Updated: 2025/06/20 06:45:43 by jlima-so         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,8 @@ CC=cc
 
 AR=ar rcs
 
-CFLAGS= -Wall -Wextra -Werror
+CFLAGS= 
+#-Wall -Wextra -Werror
 
 all: ${PROJ}
 
@@ -65,7 +66,7 @@ ${BONUS_ARQ}: ${OBJ_BONUS}
 #	${CC} ${CFLAGS} ${PROJ}.c ${NAME} ${LIBFT} -o ${PROJ}
 
 ${PROJ}: ${NAME} ${LIBFT} ${BONUS_ARQ} ${PROJ}.c
-	${CC} ${CFLAGS} ${PROJ_BONUS}.c ${BONUS_ARQ} ${NAME} ${LIBFT} -o ${PROJ_BONUS}
+	${CC} ${CFLAGS} ${PROJ}.c ${BONUS_ARQ} ${NAME} ${LIBFT} -o ${PROJ}
 
 ${PROJ_BONUS}: ${NAME} ${LIBFT} ${BONUS_ARQ} ${PROJ_BONUS}.c
 	${CC} ${CFLAGS} ${PROJ_BONUS}.c ${BONUS_ARQ} ${NAME} ${LIBFT} -o ${PROJ_BONUS}

@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:02:51 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/19 14:02:09 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/20 07:30:36 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,29 +84,13 @@ void	ft_free_matrix(char **matrix);
 void	ft_free_matrix_count(char **mat, int count);
 char	*ft_strcat(char *dest, char *src);
 char	*ft_strcpy(char *dest, char *src);
+char	*ft_strnmat(char **matrix, char *s, int n);
 char	*ft_strmat(char **matrix, char *s);
 char	*ft_strjoin_free(char *s1, char *s2, int flag);
 int		ft_matlen(char **mat);
 char	*ft_strndup(char *str, int ind);
 char	**pipex_split(char *str, char **ret, int count, int loop);
-void	exit_w_msg(int number);
-char	*get_file(int fd);
-char	*get_file(int fd);
-void	rd_wr_didnt_work(char *str);
-char	*get_file_func(char *av);
-int		prep_here_doc(int *ac, char ***av);
-int		check_access_else(t_exec ret, char **env);
-void	check_access(char **av, char **env);
-void	rdwr_frm_int_fd_aux(t_exec ret, char **env);
-void	rdwr_frm_int_fd(char *av, char **env, int *rd, int wr);
-void	find_error(void);
-void	rd_wr_didnt_work(char *str);
-void	cant_access(char *av);
-char	*get_here_doc(char *here_doc);
-void	permission_denied(char *av);
-void	not_rdwr_frm_int_fd(int *rd, int wr);
-int		check_cmd_access(char *av, char **env);
-int		end(t_main data, int ac, char **av, char **env);
+int		pipe_into_pipe(char *av, char **env, int *fd2);
 
 typedef struct s_list
 {
