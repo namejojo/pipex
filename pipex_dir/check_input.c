@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 08:22:04 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 18:41:18 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 20:36:06 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	check_one_cmd(char *str, char **env, char **cmd, int value)
 	char	*cmd_path;
 	int		ind;
 
+	if (ft_wrdchr(str, '/') || *env == NULL)
+		return (access(str, X_OK));
 	env = ft_split(ft_strnmat(env, "PATH=", 5) + 5, ':');
 	if (env == NULL)
 		return (1);

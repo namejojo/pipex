@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 19:53:23 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 20:34:18 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	main(int ac, char **av, char **ev)
 	while (++ind < ac - 2)
 		id = pipe_into_pipe(av[ind], ev, fd, fd_wr);
 	close(fd[1]);
-	if ((check_one_cmd(av[ac - 2], ev, NULL, 1) == 0 || ft_wrdchr(av[ac - 2], '/')) && fd_wr > 0)
+	if ((check_one_cmd(av[ac - 2], ev, NULL, 1) == 0) && fd_wr > 0)
 	{
 		id = fork();
 		if (id < 0)
