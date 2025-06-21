@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 06:38:48 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 18:46:37 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 19:53:52 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int	pipe_into_pipe(char *av, char **env, int *fd, int to_close)
 	int	fd2[2];
 	int	id;
 
-	close(to_close);
 	if (pipe(fd2))
 		return (perror(strerror(errno)), exit(errno), 0);
 	id = fork();
@@ -53,7 +52,10 @@ int	pipe_into_pipe(char *av, char **env, int *fd, int to_close)
 		return (perror(strerror(errno)), exit(errno), 0);
 	close (fd[1]);
 	if (id == 0)
+	{
+		close(to_close);
 		rdwr_frm_int_fd(av, env, fd[0], fd2[1]);
+	}
 	close (fd[0]);
 	dup2 (fd2[0], fd[0]);
 	dup2 (fd2[1], fd[1]);
