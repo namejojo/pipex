@@ -6,7 +6,7 @@
 #    By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/12 13:07:24 by jlima-so          #+#    #+#              #
-#    Updated: 2025/06/21 16:18:04 by jlima-so         ###   ########.fr        #
+#    Updated: 2025/06/21 18:34:08 by jlima-so         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,8 +48,7 @@ CC=cc
 
 AR=ar rcs
 
-CFLAGS= 
-#-Wall -Wextra -Werror
+CFLAGS= -Wall -Wextra -Werror
 
 all: ${PROJ}
 

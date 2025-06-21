@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:02:51 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 16:20:52 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 18:48:36 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,12 @@ char	*ft_strjoin_free(char *s1, char *s2, int flag);
 int		ft_matlen(char **mat);
 char	*ft_strndup(char *str, int ind);
 char	**pipex_split(char *str, char **ret, int count, int loop);
-int		pipe_into_pipe(char *av, char **env, int *fd);
+int		pipe_into_pipe(char *av, char **env, int *fd, int to_close);
+int		feed_file_into_pipe(int *fd, char **av, int to_close);
 int		check_input(int *ac, char ***av, char **env);
 int		check_one_cmd(char *str, char **env, char **cmd, int value);
 void	rdwr_frm_int_fd(char *cmd_path_inc, char **env, int rd, int wr);
+char	*ft_wrdchr(const char *s, int c);
 
 typedef struct s_list
 {

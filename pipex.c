@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 16:03:42 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 18:54:56 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,29 +33,32 @@ void	get_file(char *file, int wr)
 	int		fd;
 	char	*str;
 
-	fd = open(file, O_RDONLY);
-	str = get_next_line(fd);
-	ft_putstr_fd(str, wr);
-	while (str)
+	fd = open(file, O_RDONLY, 0644);
+	if (fd > 0)
 	{
-		free (str);
 		str = get_next_line(fd);
-		ft_putstr_fd(str, wr);
+		while (str)
+		{
+			ft_putstr_fd(str, wr);
+			free (str);
+			str = get_next_line(fd);
+		}
+		close(fd);
 	}
 }
 
-int	feed_file_into_pipe(int *fd, int ac, char **av, char **ev)
+int	feed_file_into_pipe(int *fd, char **av, int to_close)
 {
 	int		id;
 	char	*str;
 
-	str == NULL;
+	str = NULL;
 	id = fork();
 	if (id < 0)
 		return (perror(strerror(errno)), exit(errno), 0);
 	if (id == 0)
 	{
-		close(fd[0]);
+		close(to_close);
 		if (ft_strncmp(av[0], "here_doc", 9))
 			get_file(av[1], fd[1]);
 		else
@@ -64,6 +67,7 @@ int	feed_file_into_pipe(int *fd, int ac, char **av, char **ev)
 			ft_putstr_fd(str, fd[1]);
 			free(str);
 		}
+		close(fd[0]);
 		close(fd[1]);
 		exit(0);
 	}
@@ -79,12 +83,12 @@ int	main(int ac, char **av, char **ev)
 
 	fd_wr = check_input(&ac, &av, ev);
 	if (pipe(fd) < 0)
-		return (perror(strerror(errno)), errno);
-	ind = 1 + feed_file_into_pipe(fd, ac, av, ev);
+		return (perror(strerror(errno)), close(fd_wr), errno);
+	ind = 1 + feed_file_into_pipe(fd, av, fd_wr);
 	while (++ind < ac - 2)
-		id = pipe_into_pipe(av[ind], ev, fd);
+		id = pipe_into_pipe(av[ind], ev, fd, fd_wr);
 	close(fd[1]);
-	if (check_one_cmd(av[ac - 2], ev, NULL, 1) == 0 && fd_wr > 0)
+	if ((check_one_cmd(av[ac - 2], ev, NULL, 1) == 0 || ft_wrdchr(av[ac - 2], '/')) && fd_wr > 0)
 	{
 		id = fork();
 		if (id < 0)

@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 08:22:04 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 15:40:11 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 18:41:18 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,7 @@ int	check_one_cmd(char *str, char **env, char **cmd, int value)
 		value = access(cmd_path, X_OK);
 		free(cmd_path);
 	}
-	free (str);
-	ft_free_matrix(cmd);
-	ft_free_matrix(env);
-	return (value);
+	return (free (str), ft_free_matrix(cmd), ft_free_matrix(env), value);
 }
 
 void	check_all_cmd(int ac, char **av, char **env)
@@ -51,13 +48,13 @@ void	check_all_cmd(int ac, char **av, char **env)
 	ind = 1 + (access(av[1], R_OK) != 0);
 	while (av[++ind + 1 - (access(av[ac - 1], W_OK))])
 	{
-		if (ft_strchr(av[ind], '/') || *env == NULL)
+		if (ft_wrdchr(av[ind], '/') || *env == NULL)
 			value = access(av[ind], X_OK);
 		else
 			value = check_one_cmd(av[ind], env, NULL, 1);
 		if (value == 1)
 			return (ft_putstr_fd("memory error\n", 2), exit(errno));
-		else if (value == -1 && ft_strchr(av[ind], '/'))
+		else if (value == -1 && ft_wrdchr(av[ind], '/'))
 			perror(av[ind]);
 		else if (value == -1)
 		{
