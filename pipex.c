@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 00:10:29 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 16:03:42 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,12 @@ void	get_file(char *file, int wr)
 
 	fd = open(file, O_RDONLY);
 	str = get_next_line(fd);
+	ft_putstr_fd(str, wr);
 	while (str)
 	{
-		ft_putstr_fd(str, wr);
 		free (str);
 		str = get_next_line(fd);
+		ft_putstr_fd(str, wr);
 	}
 }
 
@@ -81,7 +82,7 @@ int	main(int ac, char **av, char **ev)
 		return (perror(strerror(errno)), errno);
 	ind = 1 + feed_file_into_pipe(fd, ac, av, ev);
 	while (++ind < ac - 2)
-		id += pipe_into_pipe(av[ind], ev, fd);
+		id = pipe_into_pipe(av[ind], ev, fd);
 	close(fd[1]);
 	if (check_one_cmd(av[ac - 2], ev, NULL, 1) == 0 && fd_wr > 0)
 	{
@@ -91,7 +92,7 @@ int	main(int ac, char **av, char **ev)
 		if (id == 0)
 			rdwr_frm_int_fd(av[ac - 2], ev, fd[0], fd_wr);
 	}
-	waitpid(id, NULL, 0);
+	waitpid(id + (id < 0), NULL, 0);
 	close(fd_wr);
 	close(fd[0]);
 	ind = (check_one_cmd(av[ac - 2], ev, NULL, 1) != 0) * 127;

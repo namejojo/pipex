@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 08:22:04 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 00:09:14 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 15:40:11 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	check_one_cmd(char *str, char **env, char **cmd, int value)
 	char	*cmd_path;
 	int		ind;
 
-	env = ft_split(ft_strnmat(env, "PATH=", 5), ':');
+	env = ft_split(ft_strnmat(env, "PATH=", 5) + 5, ':');
 	if (env == NULL)
 		return (1);
 	cmd = pipex_split(str, NULL, 0, 0);
@@ -56,8 +56,8 @@ void	check_all_cmd(int ac, char **av, char **env)
 		else
 			value = check_one_cmd(av[ind], env, NULL, 1);
 		if (value == 1)
-			return (perror(""), exit(errno));
-		else if (ft_strchr(av[ind], '/') && value == -1)
+			return (ft_putstr_fd("memory error\n", 2), exit(errno));
+		else if (value == -1 && ft_strchr(av[ind], '/'))
 			perror(av[ind]);
 		else if (value == -1)
 		{
@@ -71,6 +71,8 @@ int	check_input(int *ac, char ***av, char **env)
 {
 	int	fd;
 
+	if (*ac < 2)
+		exit(0);
 	(*ac) -= (ft_strncmp((*av)[1], "here_doc", 9) == 0);
 	(*av) += (ft_strncmp((*av)[1], "here_doc", 9) == 0);
 	if (*ac < 5)
