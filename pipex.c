@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 20:34:18 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 23:53:47 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ int	feed_file_into_pipe(int *fd, char **av, int to_close)
 		return (perror(strerror(errno)), exit(errno), 0);
 	if (id == 0)
 	{
-		close(to_close);
+		if (to_close > 0)
+			close(to_close);
 		if (ft_strncmp(av[0], "here_doc", 9))
 			get_file(av[1], fd[1]);
 		else
@@ -76,29 +77,29 @@ int	feed_file_into_pipe(int *fd, char **av, int to_close)
 
 int	main(int ac, char **av, char **ev)
 {
-	int	fd_wr;
-	int	fd[2];
+	int	fd[3];
 	int	id;
 	int	ind;
 
-	fd_wr = check_input(&ac, &av, ev);
+	fd[2] = check_input(&ac, &av, ev);
 	if (pipe(fd) < 0)
-		return (perror(strerror(errno)), close(fd_wr), errno);
-	ind = 1 + feed_file_into_pipe(fd, av, fd_wr);
+		return (perror(strerror(errno)), close(fd[2]), errno);
+	ind = 1 + feed_file_into_pipe(fd, av, fd[2]);
 	while (++ind < ac - 2)
-		id = pipe_into_pipe(av[ind], ev, fd, fd_wr);
+		id = pipe_into_pipe(av[ind], ev, fd, fd[2]);
 	close(fd[1]);
-	if ((check_one_cmd(av[ac - 2], ev, NULL, 1) == 0) && fd_wr > 0)
+	if ((check_one_cmd(av[ac - 2], ev, NULL, 1) == 0) && fd[2] > 0)
 	{
 		id = fork();
 		if (id < 0)
 			return (perror(strerror(errno)), exit(errno), 0);
 		if (id == 0)
-			rdwr_frm_int_fd(av[ac - 2], ev, fd[0], fd_wr);
+			rdwr_frm_int_fd(av[ac - 2], ev, fd[0], fd[2]);
 	}
 	waitpid(id + (id < 0), NULL, 0);
-	close(fd_wr);
+	if (fd[2] > 0)
+		close(fd[2]);
 	close(fd[0]);
-	ind = (check_one_cmd(av[ac - 2], ev, NULL, 1) != 0) * 127;
-	return (ind * (fd_wr > 0) + (fd_wr < 0));
+	ind = (check_one_cmd(av[ac - 2], ev, NULL, 1)) * 127;
+	return (ind * (fd[2] > 0) + (fd[2] < 0));
 }

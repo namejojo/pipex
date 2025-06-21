@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 06:38:48 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 19:53:52 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 23:48:45 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,8 @@ int	pipe_into_pipe(char *av, char **env, int *fd, int to_close)
 	close (fd[1]);
 	if (id == 0)
 	{
-		close(to_close);
+		if (to_close > 0)
+			close(to_close);
 		rdwr_frm_int_fd(av, env, fd[0], fd2[1]);
 	}
 	close (fd[0]);
