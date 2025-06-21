@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 08:22:04 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 20:36:06 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/21 20:38:22 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,10 @@ int	check_input(int *ac, char ***av, char **env)
 	int	fd;
 
 	if (*ac < 2)
+	{
+		ft_putendl_fd("invalid number of arguments", 2);
 		exit(0);
+	}
 	(*ac) -= (ft_strncmp((*av)[1], "here_doc", 9) == 0);
 	(*av) += (ft_strncmp((*av)[1], "here_doc", 9) == 0);
 	if (*ac < 5)
