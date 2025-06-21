@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 23:53:47 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/22 00:49:44 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	get_file(char *file, int wr)
 	int		fd;
 	char	*str;
 
-	fd = open(file, O_RDONLY, 0644);
+	fd = open(file, O_RDONLY);
 	if (fd > 0)
 	{
 		str = get_next_line(fd);
