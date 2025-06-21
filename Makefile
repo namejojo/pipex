@@ -6,7 +6,7 @@
 #    By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/12 13:07:24 by jlima-so          #+#    #+#              #
-#    Updated: 2025/06/20 06:45:43 by jlima-so         ###   ########.fr        #
+#    Updated: 2025/06/21 16:18:04 by jlima-so         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,9 +61,6 @@ ${LIBFT}: ${OBJ_LIB}
 
 ${BONUS_ARQ}: ${OBJ_BONUS}
 	${AR} ${BONUS_ARQ} $?
-
-#${PROJ}: ${NAME} ${LIBFT} ${PROJ}.c
-#	${CC} ${CFLAGS} ${PROJ}.c ${NAME} ${LIBFT} -o ${PROJ}
 
 ${PROJ}: ${NAME} ${LIBFT} ${BONUS_ARQ} ${PROJ}.c
 	${CC} ${CFLAGS} ${PROJ}.c ${BONUS_ARQ} ${NAME} ${LIBFT} -o ${PROJ}
