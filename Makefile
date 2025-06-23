@@ -6,7 +6,7 @@
 #    By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/06/12 13:07:24 by jlima-so          #+#    #+#              #
-#    Updated: 2025/06/21 18:34:08 by jlima-so         ###   ########.fr        #
+#    Updated: 2025/06/23 10:09:37 by jlima-so         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,14 +58,14 @@ ${NAME}: ${OBJ_FILES}
 ${LIBFT}: ${OBJ_LIB}
 	cd my_libft && make
 
-${BONUS_ARQ}: ${OBJ_BONUS}
-	${AR} ${BONUS_ARQ} $?
+#${BONUS_ARQ}: ${OBJ_BONUS}
+#	${AR} ${BONUS_ARQ} $?
 
-${PROJ}: ${NAME} ${LIBFT} ${BONUS_ARQ} ${PROJ}.c
-	${CC} ${CFLAGS} ${PROJ}.c ${BONUS_ARQ} ${NAME} ${LIBFT} -o ${PROJ}
+${PROJ}: ${NAME} ${LIBFT} ${PROJ}.c
+	${CC} ${CFLAGS} ${PROJ}.c ${NAME} ${LIBFT} -o ${PROJ}
 
-${PROJ_BONUS}: ${NAME} ${LIBFT} ${BONUS_ARQ} ${PROJ_BONUS}.c
-	${CC} ${CFLAGS} ${PROJ_BONUS}.c ${BONUS_ARQ} ${NAME} ${LIBFT} -o ${PROJ_BONUS}
+${PROJ_BONUS}: ${NAME} ${LIBFT} ${PROJ_BONUS}.c
+	${CC} ${CFLAGS} ${PROJ_BONUS}.c ${NAME} ${LIBFT} -o ${PROJ_BONUS}
 
 %o: %c
 	${CC} ${CFLAGS} $@ $<

@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/24 15:02:51 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 18:48:36 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/23 10:06:49 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,13 @@ typedef struct s_main
 	int	id;
 	int	ind;
 }	t_main;
+
+typedef struct s_pipex
+{
+	int	fd[3];
+	int	id;
+	int	ind;
+}	t_pipex;
 
 char	*ft_itoa(int n);
 char	*ft_substr(char const *s, unsigned int start, size_t len);

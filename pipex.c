@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/22 00:49:44 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/23 10:07:26 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,29 +77,28 @@ int	feed_file_into_pipe(int *fd, char **av, int to_close)
 
 int	main(int ac, char **av, char **ev)
 {
-	int	fd[3];
-	int	id;
-	int	ind;
-
-	fd[2] = check_input(&ac, &av, ev);
-	if (pipe(fd) < 0)
-		return (perror(strerror(errno)), close(fd[2]), errno);
-	ind = 1 + feed_file_into_pipe(fd, av, fd[2]);
-	while (++ind < ac - 2)
-		id = pipe_into_pipe(av[ind], ev, fd, fd[2]);
-	close(fd[1]);
-	if ((check_one_cmd(av[ac - 2], ev, NULL, 1) == 0) && fd[2] > 0)
+	t_pipex data;
+	
+	data.fd[2] = check_input(&ac, &av, ev);
+	if (pipe(data.fd) < 0)
+		return (perror(strerror(errno)), close(data.fd[2]), errno);
+	data.ind = 1 + feed_file_into_pipe(data.fd, av, data.fd[2]);
+	while (++data.ind < ac - 2)
+		data.id = pipe_into_pipe(av[data.ind], ev, data.fd, data.fd[2]);
+	close(data.fd[1]);
+	if ((check_one_cmd(av[ac - 2], ev, NULL, 1) == 0) && data.fd[2] > 0)
 	{
-		id = fork();
-		if (id < 0)
+		data.id = fork();
+		if (data.id < 0)
 			return (perror(strerror(errno)), exit(errno), 0);
-		if (id == 0)
-			rdwr_frm_int_fd(av[ac - 2], ev, fd[0], fd[2]);
+		if (data.id == 0)
+			rdwr_frm_int_fd(av[ac - 2], ev, data.fd[0], data.fd[2]);
 	}
-	waitpid(id + (id < 0), NULL, 0);
-	if (fd[2] > 0)
-		close(fd[2]);
-	close(fd[0]);
-	ind = (check_one_cmd(av[ac - 2], ev, NULL, 1)) * 127;
-	return (ind * (fd[2] > 0) + (fd[2] < 0));
+	while (data.ind--)
+		wait(NULL);
+	if (data.fd[2] > 0)
+		close(data.fd[2]);
+	close(data.fd[0]);
+	data.ind = (check_one_cmd(av[ac - 2], ev, NULL, 1)) * 127;
+	return (data.ind * (data.fd[2] > 0) + (data.fd[2] < 0));
 }
