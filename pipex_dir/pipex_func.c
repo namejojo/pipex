@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 06:38:48 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/21 23:48:45 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/23 10:36:23 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	rdwr_frm_int_fd(char *cmd_path_inc, char **env, int rd, int wr)
 	dup2(wr, 1);
 	cmd = pipex_split(cmd_path_inc, NULL, 0, 0);
 	if (*env == NULL || ft_wrdchr(cmd_path_inc, '/'))
-		return (execve(cmd_path_inc, cmd, env), \
+		return (execve(cmd_path_inc, cmd, env), close(wr), \
 			ft_free_matrix(cmd), close(rd), exit(0));
 	env = ft_split(ft_strnmat(env, "PATH=", 5) + 5, ':');
 	cmd_path_inc = ft_strjoin("/", *cmd);
@@ -53,6 +53,8 @@ int	pipe_into_pipe(char *av, char **env, int *fd, int to_close)
 	close (fd[1]);
 	if (id == 0)
 	{
+		close(fd[1]);
+		close(fd2[0]);
 		if (to_close > 0)
 			close(to_close);
 		rdwr_frm_int_fd(av, env, fd[0], fd2[1]);
