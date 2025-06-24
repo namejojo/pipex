@@ -6,7 +6,7 @@
 /*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 08:19:15 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/24 11:20:14 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/24 11:24:49 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,8 @@ int	feed_file_into_pipe(int *fd, char **av, int to_close)
 
 int	main(int ac, char **av, char **ev)
 {
-	t_pipex data;
-	
+	t_pipex	data;
+
 	data.fd[2] = check_input(&ac, &av, ev);
 	if (pipe(data.fd) < 0)
 		return (perror(strerror(errno)), close(data.fd[2]), errno);
