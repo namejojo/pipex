@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jlima-so <jlima-so@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jlima-so <jlima-so@student.42lisba.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/20 08:22:04 by jlima-so          #+#    #+#             */
-/*   Updated: 2025/06/22 00:10:10 by jlima-so         ###   ########.fr       */
+/*   Updated: 2025/06/24 11:58:14 by jlima-so         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,22 @@ int	check_one_cmd(char *str, char **env, char **cmd, int value)
 	return (free (str), ft_free_matrix(cmd), ft_free_matrix(env), value);
 }
 
+int	full_access(char *file)
+{
+	int	fd;
+
+	if (access(file, W_OK) == 0)
+		return (0);
+	fd = open(file, O_WRONLY | O_CREAT);
+	if (fd > 0)
+	{
+		close (fd);
+		unlink (file);
+		return (0);
+	}
+	return (1);
+}
+
 void	check_all_cmd(int ac, char **av, char **env)
 {
 	int	ind;
@@ -48,9 +64,9 @@ void	check_all_cmd(int ac, char **av, char **env)
 	if (ft_strncmp(av[0], "here_doc", 9) && (access(av[1], R_OK)))
 		perror(av[1]);
 	ind = 1 + (access(av[1], R_OK) != 0);
-	while (av[++ind + 1 - (access(av[ac - 1], W_OK))])
+	while (av[++ind + 1 - (full_access(av[ac - 1]))])
 	{
-		if (ft_wrdchr(av[ind], '/') || *env == NULL)
+		if (ft_wrdchr(av[ind], '/') || *env == NULL || ft_emptystr(av[ind]))
 			value = access(av[ind], X_OK);
 		else
 			value = check_one_cmd(av[ind], env, NULL, 1);
