@@ -94,11 +94,11 @@ int	main(int ac, char **av, char **ev)
 		if (data.id == 0)
 			rdwr_frm_int_fd(av[ac - 2], ev, data.fd[0], data.fd[2]);
 	}
-	while (data.ind--)
+	while (--data.ind)
 		wait(NULL);
 	if (data.fd[2] > 0)
 		close(data.fd[2]);
 	close(data.fd[0]);
-	data.ind = (check_one_cmd(av[ac - 2], ev, NULL, 1)) * 127;
+	data.ind = (check_one_cmd(av[ac - 2], ev, NULL, 1) != 0) * 127;
 	return (data.ind * (data.fd[2] > 0) + (data.fd[2] < 0));
 }
